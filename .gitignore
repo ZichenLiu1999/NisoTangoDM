@@ -4,8 +4,8 @@ __pycache__
 run
 
 # data
-data/bunny
-data/spot
+# data/bunny
+# data/spot
 # data/dipeptide
 # data/R2inR3
 # data/SOn
