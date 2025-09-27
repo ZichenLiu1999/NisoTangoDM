@@ -1,0 +1,14 @@
+.DS_Store
+__pycache__
+.vscode
+run
+
+data
+# data/bunny
+# data/spot
+# data/dipeptide
+# data/R2inR3
+# data/SOn
+
+
+

@@ -1,0 +1,67 @@
+defaults:
+  - _self_
+  - experiment: null
+
+seed: 0
+data_seed: 0
+
+if_train: True
+if_test: True
+if_sample: True
+if_validate: True
+if_cal_distri_dist: True
+if_save_sample: False
+
+load_model_path: no_path
+load_model_prefix: no_prefix
+save_prefix: "-"
+workdir: null
+device: null
+now: ${now:'%m%d-%H-%M-%S'}
+cal_dist_sample_num: 5000
+
+network:
+  network_mode: MLP
+  activation: SiLU
+  hidden_layers: [512, 512, 512, 512, 512]
+  scale: 1.0
+
+training:
+  algo: vesde
+  val_freq: -1
+  grad_clip: True
+  clip_threshold: 10.
+  mode: dsm
+  ReweightPower: 2
+  eps: 0.
+  rescale_fn: exact
+
+  niso_tango_com_rate: 0.01
+
+sample:
+  Reverse_sde: True
+  corrector: True
+  Reverse_ode: False
+  Early_stop: True
+
+  sample_num: 2000
+  sample_threshold: 0.05
+  corrector_snr: 0.05
+  corrector_step: 5
+  sample_epoch: 1
+
+optim:
+  lr: 0.0005
+
+model:
+  N: 500
+  # c: 0.
+
+hydra:
+  run:
+    dir: ./run/hydra
+  sweep:
+    dir: ./run/hydra
+
+
+

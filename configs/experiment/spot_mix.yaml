@@ -1,0 +1,35 @@
+# @package _global_
+problem:
+  runner: MeshRunner
+  manifold: Mesh
+  dataset: spot_mix
+
+cal_dist_sample_num: 10000
+
+sample:
+  sample_num: 50000
+  sample_threshold: 0.002
+  corrector_snr: 0.05
+  corrector_step: 10
+
+  Early_stop: False
+  Reverse_ode: False
+
+network:
+   hidden_layers: [256, 256, 256]
+
+training:
+  algo: vesde
+  n_epochs: 20000
+  batch_size: 4096
+  ReweightPower: 2
+
+optim:
+  lr: 0.0005
+
+
+model:
+  c: 0.002
+  sigma_min: 0.001
+  sigma_max: 3.
+  N: 200

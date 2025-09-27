@@ -1,0 +1,37 @@
+# @package _global_
+problem:
+  runner: R2inR3Runner
+  manifold: R2inR3
+  dataset: MixGaussian9w 
+
+save_plot_grid: False
+cal_dist_sample_num: 10000
+
+sample:
+  Early_stop: False
+  Reverse_ode: False
+
+  sample_num: 10000
+  sample_threshold: 0.2
+  corrector_snr: 0.01
+  corrector_step: 10
+
+network:
+  hidden_layers: [64, 64, 64]
+
+well_sigma: 0.3
+bd_lim: 1.1
+
+training:
+  algo: vesde
+  batch_size: 512
+  n_epochs: 2000
+  ReweightPower: 2
+  eps: 0.
+
+model:
+  c: 0.2
+  N: 500
+  sigma_min: 0.02
+  sigma_max: 3.0
+

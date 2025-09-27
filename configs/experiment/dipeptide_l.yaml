@@ -1,0 +1,37 @@
+# @package _global_
+problem:
+  runner: MDRunner
+  manifold: MD
+  dataset: dipeptide_long
+
+cal_dist_sample_num: 10000
+
+sample:
+  sample_num: 11000
+  sample_threshold: 0.02
+  corrector_snr: 0.05
+  corrector_step: 10
+  Early_stop: False
+  Reverse_ode: False
+
+network:
+  network_mode: EMLP
+  hidden_layers: [512, 512, 512, 512, 512]
+  activation: SiLU
+
+training:
+  algo: vesde
+  batch_size: 1024
+  n_epochs: 6000
+  ReweightPower: 2
+
+optim:
+  lr: 0.0005
+
+model:
+  c: 0.005
+  N: 500
+  sigma_min: 0.0001
+  sigma_max: 5.
+
+

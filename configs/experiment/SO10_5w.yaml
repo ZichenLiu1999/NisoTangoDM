@@ -1,0 +1,39 @@
+# @package _global_
+problem:
+  runner: SOnRunner
+  manifold: SOn
+  mat_dim: 10
+  dataset: SO10_5w
+
+cal_dist_sample_num: 8000
+
+sample:
+  Early_stop: False
+  Reverse_ode: False
+
+  sample_num: 10000
+  sample_threshold: 0.01
+  corrector_snr: 0.05
+  corrector_step: 10
+
+
+network:
+  hidden_layers: [512, 512, 512]
+
+training:
+  algo: vesde
+  batch_size: 512
+  n_epochs: 5000
+  ReweightPower: 2
+  clip_threshold: 1.
+
+optim:
+  lr: 0.001
+
+model:
+  c: 0.01
+  N: 500
+  sigma_min: 0.005
+  sigma_max: 3.0
+
+
