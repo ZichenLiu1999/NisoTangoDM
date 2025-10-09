@@ -150,6 +150,58 @@ def gen_sample_from_eigen(obj, idx_list, weight_list, name="mix"):
     return
 
 
+def gen_sample_trancate(obj, idx_list, weight_list, name="mix_tanc"):
+    mesh_complex = trimesh.load(f"{abs_path}/data/{obj}/{obj}_mesh_complex.ply", 'ply')
+    v_np, f_np = mesh_complex.vertices, mesh_complex.faces
+    v, f = torch.tensor(v_np), torch.tensor(f_np)
+    print("#vertices: ", v.shape[0], "#faces: ", f.shape[0])
+    
+    eigfns = np.load(f"{abs_path}/data/{obj}/{obj}_eigfns.npy")
+    eigvals = np.load(f"{abs_path}/data/{obj}/{obj}_eigvals.npy")
+    eigfns = torch.tensor(eigfns).clamp(min=0.0000)
+    eigfns[:, 0] += 1.0
+    print(f"largest eigval: {eigvals.max().item()}, smallest eigval: {eigvals.min().item()}")
+    
+    # start sample
+    set_seed_everywhere(12345)
+    num_samples = 90000
+    weights = torch.tensor(weight_list, dtype=torch.float)
+    num_per_idx = torch.multinomial(weights, num_samples, replacement=True)
+    
+    samples_list = []
+    for i, idx in enumerate(idx_list):
+        nsamples_temp = (num_per_idx == i).sum().item()
+        
+        vals = eigfns[:, idx]
+        vals = torch.mean(vals[f], dim=1)
+        vals = vals * torch.tensor(igl.doublearea(v_np, f_np)).reshape(-1) / 2
+        
+        f_idx = torch.multinomial(vals, nsamples_temp, replacement=True)
+        barycoords = sample_simplex_uniform(2, (nsamples_temp,))
+        samples_temp = torch.sum(v[f[f_idx]] * barycoords[..., None], axis=1)
+        samples_list.append(samples_temp.float())
+    samples = torch.cat(samples_list, dim=0)
+    
+    condition = (samples[:, 1] <= 0.7) & (samples[:, 2] <= 0.92)
+    samples_f = samples[condition]
+    samples_f = samples_f[torch.randperm(samples_f.shape[0], generator=torch.Generator().manual_seed(12345))][:60000].numpy()
+    
+    np.save(f"{abs_path}/data/{obj}/{obj}_{name}.npy", samples_f)
+    
+    # plot
+    fig = plot_point_cloud(obj, mesh_complex, samples_f)
+    offline.plot(fig, filename=f'{abs_path}/data/figs/mesh/{obj}_{name}_point.html', auto_open=False)
+    fig.write_image(f"{abs_path}/data/figs/mesh/{obj}_{name}_point.png")
+    
+    mesh_simple1 = trimesh.load(f"{abs_path}/data/{obj}/{obj}_mesh_simple1.ply", 'ply')
+    fig = plot_histogram_on_surface(obj, mesh_simple1, samples_f)
+    offline.plot(fig, filename=f'{abs_path}/data/figs/mesh/{obj}_{name}_hist.html', auto_open=False)
+    fig.write_image(f"{abs_path}/data/figs/mesh/{obj}_{name}_hist.png")
+    
+    return
+
+
+
 if __name__ == "__main__":
     create_mesh("bunny")
     cal_eigen_val_fn("bunny", idx=1000)
@@ -157,15 +209,12 @@ if __name__ == "__main__":
     create_mesh("spot")
     cal_eigen_val_fn("spot", idx=1000)
     
+    gen_sample_trancate(obj="spot", idx_list=[0, 500, 1000], weight_list=[1, 1, 1], name="mixfil")
+    
     obj_list = ["bunny", "spot"]
     for obj in obj_list:
     
         idx_list = [0, 500, 1000]
         weight_list = [1, 1, 1]
         gen_sample_from_eigen(obj, idx_list, weight_list, name="mix")
-
-
-
-
-
 
