@@ -1,3 +1,4 @@
+# The code in this file is modified from https://github.com/facebookresearch/riemannian-fm/blob/main/manifm/manifolds/mesh.py.
 import torch
 import numpy as np
 import trimesh
